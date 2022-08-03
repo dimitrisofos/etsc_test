@@ -124,18 +124,19 @@ If you want to see the algorithm's menu run:
 
 ### Test Run for Maritime and Biological
 
-`ects` : `ets -i "file location" -g vote -v (3 for Biological or 5 Maritime) -d 0 -c -1 ects -u 0.0`
+`ects` : `ets -i "file location" -g vote -v (3 for Biological or 7 Maritime) -d 0 -c -1 ects -u 0.0`
 
-`edsc` : `ets -i "file location" -g vote -v (3 for Biological or 5 Maritime) -d 0 -c -1 --cplus edsccplus`
+`edsc` : `ets -i "file location" -g vote -v (3 for Biological or 7 Maritime) -d 0 -c -1 --cplus edsccplus`
 
-`ecec` : `ets -i "file location" -g vote -v (3 for Biological or 5 Maritime) -d 0 -c -1 --java ecec`
+`ecec` : `ets -i "file location" -g vote -v (3 for Biological or 7 Maritime) -d 0 -c -1 --java ecec`
 
-`teaser` : `ets -i "file location" -g vote -v (3 for Biological or 5 Maritime) -d 0 -c -1 --java teaser -s 10`
+`teaser` : `ets -i "file location" -g vote -v (3 for Biological or 7 Maritime) -d 0 -c -1 --java teaser -s 10`
 
-`mlstm` : `ets -i "file location" -v (3 for Biological or 5 Maritime) -d 0 -c -1 -g normal mlstm`
+`mlstm` : `ets -i "file location" -v (3 for Biological or 7 Maritime) -d 0 -c -1 -g normal mlstm`
 
-`eco-k` : `ets -i "file location"" -g vote -v (3 for Biological or 5 Maritime) -d 0 -c -1 economy-k`
+`eco-k` : `ets -i "file location"" -g vote -v (3 for Biological or 7 Maritime) -d 0 -c -1 economy-k`
 
 ### Disclaimer
 
-Any false product and misuse of the used algorithms is on the authors of the paper. Please inform us if you detect any misconduct or misuse of the code/datasets used in this repository.
+Any false product and misuse of the used algorithms is on the authors of the original papers. Please, inform us if you detect any misconduct or misuse of the code/datasets used in this repository.
+
