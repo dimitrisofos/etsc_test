@@ -317,7 +317,10 @@ def teaser(config: Config, class_no: int, normalize: bool) -> None:
     """
     Run 'TEASER' algorithm.
     """
-    logger.info("Running teaser ...")
+    if (normalize):
+        logger.info("Running teaserZ ...")
+    else:
+        logger.info("Running teaser ...")
     classifier = TEASER(config.timestamps, class_no, normalize)
     if config.cv_data is not None:
         cv(config, classifier)
