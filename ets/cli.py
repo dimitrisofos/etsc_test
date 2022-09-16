@@ -1,6 +1,7 @@
 import logging
 import sys
 import time
+import math
 from collections import Counter
 from datetime import timedelta
 from typing import Set, List, Tuple, Optional
@@ -414,6 +415,35 @@ def economy_k(config: Config, clusters, cost_time, lamb, random_state) -> None:
         train_and_test(config, classifier)
 
 
+def determine_voting_result(votes):
+    req_votes = math.ceil(len(votes)/2)
+    winner = []
+    for ii in range(len(votes[0])):
+        temp_votes = []
+        temp_classes = []
+        for j in range(len(votes)):
+            temp_votes.append(votes[j][ii])
+            temp_classes.append(votes[j][ii][1])
+        g = sorted(temp_votes)
+        c = Counter(temp_classes).keys()
+        if len(c) == 1: # if all variates have the same label then take the middle one
+            winner.append(g[req_votes-1])
+        else: # else find the most early and common
+            cnt = 0
+            found = 0
+            pl = {key: 0 for key in c}
+            while cnt<len(votes):
+                pl[g[cnt][1]]+=1
+                if pl[g[cnt][1]]>=req_votes:
+                    winner.append(g[cnt])
+                    break
+                cnt=cnt+1
+            # In case we have been so far inconclusive, consider the latest [interval,class label]
+            if req_votes not in pl.values():
+                winner.append(g[-1])
+    return(winner)
+
+
 def cv(config: Config, classifier: EarlyClassifier) -> None:
     sum_accuracy, sum_earliness, sum_precision, sum_recall, sum_f1 = 0, 0, 0, 0, 0
     all_predictions: List[Tuple[int, int]] = list()
@@ -567,10 +597,14 @@ def cv(config: Config, classifier: EarlyClassifier) -> None:
                                file=config.output)
 
             # Make predictions from the votes of each test example
-            for ii in range(len(votes[0])):
-                max_timestamp = max(map(lambda x: x[ii][0], votes))
-                most_predicted = Counter(map(lambda x: x[ii][1], votes)).most_common(1)[0][0]
-                predictions.append((max_timestamp, most_predicted))
+            # click.echo('votes: '+str(votes))
+            # for ii in range(len(votes[0])):
+            #     max_timestamp = max(map(lambda x: x[ii][0], votes))
+            #     most_predicted = Counter(map(lambda x: x[ii][1], votes)).most_common(1)[0][0]
+            #     predictions.append((max_timestamp, most_predicted))
+            winners = determine_voting_result(votes)
+            for i in range(len(votes[0])):
+                predictions.append((winners[i][0],winners[i][1]))
         all_predictions.extend(predictions)
         all_labels.extend(config.cv_labels[test_indices])
 
@@ -744,10 +778,14 @@ def train_and_test(config: Config, classifier: EarlyClassifier) -> None:
                            file=config.output)
 
         # Make predictions from the votes of each test example
+        # click.echo('votes: '+str(votes))
+        # for i in range(len(votes[0])):
+        #     max_timestamp = max(map(lambda x: x[i][0], votes))
+        #     most_predicted = Counter(map(lambda x: x[i][1], votes)).most_common(1)[0][0]
+        #     predictions.append((max_timestamp, most_predicted))
+        winners = determine_voting_result(votes)
         for i in range(len(votes[0])):
-            max_timestamp = max(map(lambda x: x[i][0], votes))
-            most_predicted = Counter(map(lambda x: x[i][1], votes)).most_common(1)[0][0]
-            predictions.append((max_timestamp, most_predicted))
+            predictions.append((winners[i][0],winners[i][1]))
 
     accuracy = utils.accuracy(predictions, config.test_labels.tolist())
     earliness = utils.earliness(predictions, config.ts_length - 1)
