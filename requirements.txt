@@ -36,3 +36,5 @@ matplotlib==3.3.3
 tensorflow==1.14.0
 h5py==2.10.0
 tslearn == 0.5.1.0
+sktime==0.13.0
+arff==0.9
