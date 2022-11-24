@@ -107,6 +107,11 @@ If you want to see the algorithm's menu run:
 
 `--folds` : Used when there are premade folds available.
 
+`--trunc` : Use STRUT approach to find the best time-point to perform ETSC.
+
+`--pyts-csv`: Use pyts format for STRUT Weasel's input, when the dataset comes in csv format.
+
+
 ### Test Run for UCR_UEA
 
 `ects` : `ets -t "training file name" -e "testing file name" --make-cv -h Class -c -1 -g vote ects -u 0.0`
@@ -121,6 +126,13 @@ If you want to see the algorithm's menu run:
 
 `eco-k` : `ets t "training file name" -e "testing file name" --make-cv -h Class -c -1 -g vote economy-k`
 
+`strut - minirocket` : `ets -t "training file name" -e "testing file name" --make-cv -h Class -c -1 --trunc strut -m minirocket -p 0 -s 2`
+
+`strut - weasel` : `ets -t "training file name" -e "testing file name" --make-cv -h Class -c -1 --trunc strut -m weasel -p 0 -s 2`
+
+`strut - minirocket-fav` : `ets -t "training file name" -e "testing file name" --make-cv -h Class -c -1 --trunc strut -m minirocket_fav -p 0 -s 2`
+
+`strut - weasel-fav` : `ets -t "training file name" -e "testing file name" --make-cv -h Class -c -1 --trunc strut -m weasel_fav -p 0 -s 2`
 
 ### Test Run for Maritime and Biological
 
@@ -135,6 +147,14 @@ If you want to see the algorithm's menu run:
 `mlstm` : `ets -i "file location" -v (3 for Biological or 7 Maritime) -d 0 -c -1 -g normal mlstm`
 
 `eco-k` : `ets -i "file location"" -g vote -v (3 for Biological or 7 Maritime) -d 0 -c -1 economy-k`
+
+`strut - minirocket` : `ets -i "file location"" -v (3 for Biological or 7 Maritime) -d 0 -c -1  --trunc strut -m minirocket -p 0 -s 2`
+
+`strut - weasel` : `ets -i "file location"" -v (3 for Biological or 7 Maritime) -d 0 -c -1 --pyts-csv --trunc strut -m weasel -p 0 -s 2`
+
+`strut - minirocket-fav` : `ets -i "file location"" -v (3 for Biological or 7 Maritime) -d 0 -c -1  --trunc strut -m minirocket_fav -p 0 -s 2`
+
+`strut - weasel-fav` : `ets -i "file location"" -v (3 for Biological or 7 Maritime) -d 0 -c -1 --pyts-csv --trunc strut -m weasel_fav -p 0 -s 2`
 
 ### Disclaimer
 
