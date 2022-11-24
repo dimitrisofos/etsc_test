@@ -22,7 +22,34 @@ Python3 is required to install the libraries stated in the `requirements.txt`.
 
 JVM >= 1.8 is required to run the algorithms that are implemented using java.
 
-## Installation
+## Run in anaconda environment
+1. Create the environment
+
+```bash
+conda create -n py37 python=3.7
+```
+
+2. Activate it
+
+```bash
+conda activate py37
+```
+
+3. Install required packages:
+
+```bash
+pip3 install -r requirements.txt
+```
+
+4. Locally install `timeline`:
+
+```bash
+pip install --editable .
+```
+
+
+
+## Run in virtualenv
 1. Install the `virtualenv` package:
 
 ```bash
