@@ -23,15 +23,15 @@ from progressbar import ProgressBar, AnimatedMarker, Bar, AdaptiveETA, Percentag
 
 class STRUT():
 
-        def __init__(self, timestamps, ts_length, variate, optimize, tsc_method, n_splits, dataset):
+        def __init__(self, timestamps, ts_length, variate, optimize, tsc_method, n_splits, class_imbalance, dataset):
             self.timestamps = timestamps
             self.tsc_method = tsc_method #MINIROCKET, MINIROCKET_FAV, WEASEL, WEASEL_FAV
             self.optimize = optimize
             self.variate = variate
             self.n_splits = n_splits
             self.ts_length = ts_length
+            self.class_imbalance = class_imbalance
             self.dataset = dataset
-
 
         def train_test_prefix(self, X_training, X_test, Y_training, Y_test):
 
@@ -48,7 +48,12 @@ class STRUT():
                     transformation = MiniRocket( )     
 
                 transformation.fit(X_training)
-                classifier = RidgeClassifierCV(alphas = np.logspace(-3, 3, 10))
+
+                if self.class_imbalance:
+                    classifier = RidgeClassifierCV(alphas = np.logspace(-3, 3, 10), class_weight = 'balanced')
+                else:
+                    
+                    classifier = RidgeClassifierCV(alphas = np.logspace(-3, 3, 10))
 
             elif self.tsc_method == "WEASEL" or self.tsc_method == "WEASEL_FAV":
             
@@ -62,7 +67,11 @@ class STRUT():
                     transformation = WEASEL(word_size=3, n_bins = 2, window_sizes =  [ 0.4, 0.5,  0.6, 0.7, 0.8, 0.9], norm_mean = False, norm_std = False)
                 
                 transformation.fit(X_training, Y_training)
-                classifier = LogisticRegression(max_iter = 10000)
+
+                if self.class_imbalance:
+                    classifier = LogisticRegression(max_iter = 10000, class_weight = 'balanced')
+                else:
+                    classifier = LogisticRegression(max_iter = 10000)
             
             else:
                 print("Unsupported method")
@@ -744,7 +753,7 @@ class STRUT():
             preds = [(best_timepoint,result[0][x]) for x in range(result[0].size)]
             testing_time = result[4]
             
-            return preds, training_time, testing_time, best_timepoint 
+            return preds, training_time, testing_time, float(best_timepoint)/self.ts_length
 
         def weasel_strut_fav(self, train_data, test_data):
 
@@ -983,4 +992,4 @@ class STRUT():
             testing_time = result[4]
 
 
-            return preds, training_time, testing_time, best_timepoint  
+            return preds, training_time, testing_time, float(best_timepoint)/self.ts_length

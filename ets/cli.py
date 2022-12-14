@@ -556,13 +556,15 @@ def economy_k(config: Config, clusters, cost_time, lamb, random_state) -> None:
               help='Metric to optimize: 0 - accuracy, 1 - F1-score, 2 - harmonic mean') 
 @click.option('-s', '--splits', type=click.IntRange(min=2), default=2, show_default=True,
               help='Number of splits')
+@click.option('-i', '--class_imbalance', is_flag=True,
+              help='Class imbalance')
 @pass_config
-def strut(config: Config, method, optimize, splits) -> None: #maybe add method
+def strut(config: Config, method, optimize, splits, class_imbalance) -> None: #maybe add method
     """
     Run 'STRUT' algorithm.
     """
     logger.info("Running "+ str(method).replace('_', ' ') + " ...")
-    classifier = STRUT(config.timestamps, config.ts_length, config.variate, optimize = optimize, tsc_method = method, n_splits = splits, dataset = config.dataset)
+    classifier = STRUT(config.timestamps, config.ts_length, config.variate, optimize = optimize, tsc_method = method, n_splits = splits, class_imbalance = class_imbalance,  dataset = config.dataset)
     #remove result files if exist
     if os.path.exists('results/'+config.dataset+'_metric_scores/'+config.dataset+'_'+method.lower()+'_accuracy.txt'):
         os.remove('results/'+config.dataset+'_metric_scores/'+config.dataset+'_'+method.lower()+'_accuracy.txt')
