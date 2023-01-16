@@ -659,37 +659,35 @@ class STRUT():
 
                     else: # harmonic mean
                         
-                        
                         if mid - low < 2: # adjacent timepoints => can't bisect further
-                            if low_harmonic_mean >= high_harmonic_mean:
+                            if low_harmonic_mean >= mid_harmonic_mean:
                                 bisect_timepoints.append((low, low_harmonic_mean))
                                 break
                             else:
-                                bisect_timepoints.append((mid, high_harmonic_mean))
+                                bisect_timepoints.append((mid, mid_harmonic_mean))
                                 break 
                         elif high - mid < 2:
-                            if high_harmonic_mean >= high_harmonic_mean:
-                                bisect_timepoints.append((mid, high_harmonic_mean))
+                            if mid_harmonic_mean >= high_harmonic_mean:
+                                bisect_timepoints.append((mid, mid_harmonic_mean))
                                 break
                             else:
                                 bisect_timepoints.append((high, high_harmonic_mean))
                                 break 
-                
-
-                        if high_harmonic_mean > high_harmonic_mean and high_harmonic_mean > low_harmonic_mean:
+                        
+                        if high_harmonic_mean > mid_harmonic_mean and high_harmonic_mean > low_harmonic_mean:
                             bisect_timepoints.append((high, high_harmonic_mean))
                             low = mid 
                             mid += int((high-low)/2)
-                        elif low_harmonic_mean >= high_harmonic_mean and low_harmonic_mean >= high_harmonic_mean:
+                        elif low_harmonic_mean >= high_harmonic_mean and low_harmonic_mean >= mid_harmonic_mean:
                             bisect_timepoints.append((low, low_harmonic_mean))
                             high = mid 
                             mid = int((high-low)/2) + low
-                        elif high_harmonic_mean >= high_harmonic_mean and high_harmonic_mean > low_harmonic_mean:
+                        elif mid_harmonic_mean >= high_harmonic_mean and mid_harmonic_mean > low_harmonic_mean:
                             bisect_timepoints.append((mid, mid_result[1]))
                             low += int((mid-low)/2)
                             high = int((high-mid)/2) + mid
 
-                # sort  bisect_timepoints by timepoint and then find max metric score
+                # sort bisect_timepoints by timepoint and then find max metric score
                 bisect_timepoints.sort(key=lambda item:item[0])
                 best_timepoints.append(max(bisect_timepoints,key=lambda item:item[1])[0])
 
@@ -697,7 +695,6 @@ class STRUT():
                 evaluated_timepoints.sort() 
                 evaluated_timepoints = np.array(evaluated_timepoints)
                 
-
                 # sort metric score dicts by timepoint (key) in ascending order and convert to ndarray
                 accuracies = np.array([x[1] for x in sorted(accuracies.items())])
                 f1_scores = np.array([x[1] for x in sorted(f1_scores.items())])
@@ -722,12 +719,13 @@ class STRUT():
                 plt.ylim(0.0,1.1)
                 plt.legend() 
                 plt.savefig('results/'+self.dataset+'_plots/minirocket_strut_fav_accuracy.pdf', format='pdf', dpi=320, bbox_inches='tight')  
+                
 
                 #plot f1-score
                 full_time_f1_score = np.repeat(f1_scores[-1], evaluated_timepoints.shape[0]) # full tsc f1 score for comparison
                 fig, ax = plt.subplots(figsize=(8, 6), dpi=80)
                 ax.plot(evaluated_timepoints, full_time_f1_score , '--', color = 'blue', label = "Minirocket Full-Time")
-                ax.plot(evaluated_timepoints, accuracies, color = 'blue', label = "Minirocket STRUT-FAV") 
+                ax.plot(evaluated_timepoints, f1_scores, color = 'blue', label = "Minirocket STRUT-FAV") 
                 plt.xlabel("Truncation Timepoint")
                 plt.ylabel("F1-score")
                 plt.ylim(0.0,1.1)
@@ -742,7 +740,7 @@ class STRUT():
                 plt.ylim(0.0,1.1)
                 plt.legend() 
                 plt.savefig('results/'+self.dataset+'_plots/minirocket_strut_fav_harmonic_mean.pdf', format='pdf', dpi=320, bbox_inches='tight') 
-
+                
                 
             #Test for best earliness
 
@@ -752,6 +750,8 @@ class STRUT():
             result = self.train_test_prefix(self.trunc_data(X_TRAIN,best_timepoint), self.trunc_data(X_TEST,best_timepoint), Y_TRAIN, Y_TEST)
             preds = [(best_timepoint,result[0][x]) for x in range(result[0].size)]
             testing_time = result[4]
+
+            #print(preds, training_time, testing_time, float(best_timepoint)/self.ts_length)
             
             return preds, training_time, testing_time, float(best_timepoint)/self.ts_length
 
@@ -894,32 +894,30 @@ class STRUT():
 
                     else: # harmonic mean
                         
-                        
                         if mid - low < 2: # adjacent timepoints => can't bisect further
-                            if low_harmonic_mean >= high_harmonic_mean:
+                            if low_harmonic_mean >= mid_harmonic_mean:
                                 bisect_timepoints.append((low, low_harmonic_mean))
                                 break
                             else:
-                                bisect_timepoints.append((mid, high_harmonic_mean))
+                                bisect_timepoints.append((mid, mid_harmonic_mean))
                                 break 
                         elif high - mid < 2:
-                            if high_harmonic_mean >= high_harmonic_mean:
-                                bisect_timepoints.append((mid, high_harmonic_mean))
+                            if mid_harmonic_mean >= high_harmonic_mean:
+                                bisect_timepoints.append((mid, mid_harmonic_mean))
                                 break
                             else:
                                 bisect_timepoints.append((high, high_harmonic_mean))
                                 break 
-                
-
-                        if high_harmonic_mean > high_harmonic_mean and high_harmonic_mean > low_harmonic_mean:
+                        
+                        if high_harmonic_mean > mid_harmonic_mean and high_harmonic_mean > low_harmonic_mean:
                             bisect_timepoints.append((high, high_harmonic_mean))
                             low = mid 
                             mid += int((high-low)/2)
-                        elif low_harmonic_mean >= high_harmonic_mean and low_harmonic_mean >= high_harmonic_mean:
+                        elif low_harmonic_mean >= high_harmonic_mean and low_harmonic_mean >= mid_harmonic_mean:
                             bisect_timepoints.append((low, low_harmonic_mean))
                             high = mid 
                             mid = int((high-low)/2) + low
-                        elif high_harmonic_mean >= high_harmonic_mean and high_harmonic_mean > low_harmonic_mean:
+                        elif mid_harmonic_mean >= high_harmonic_mean and mid_harmonic_mean > low_harmonic_mean:
                             bisect_timepoints.append((mid, mid_result[1]))
                             low += int((mid-low)/2)
                             high = int((high-mid)/2) + mid
@@ -968,6 +966,7 @@ class STRUT():
                 plt.ylim(0.0,1.1)
                 plt.legend() 
                 plt.savefig('results/'+self.dataset+'_plots/weasel_strut_fav_f1_score.pdf', format='pdf', dpi=320, bbox_inches='tight') 
+
 
                 #plot harmonic mean
                 fig, ax = plt.subplots(figsize=(8, 6), dpi=80)
