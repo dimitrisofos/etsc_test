@@ -23,6 +23,7 @@ from ets.algorithms.edsc_c import EDSC_C
 from ets.algorithms.mlstm import MLSTM
 from ets.algorithms.teaser import TEASER
 from ets.algorithms.strut import STRUT
+from ets.algorithms.calimera import CALIMERA
 from sktime.datasets import load_from_arff_to_dataframe
 from sklearn.preprocessing import LabelEncoder
 
@@ -577,6 +578,21 @@ def strut(config: Config, method, optimize, splits, class_imbalance) -> None: #m
     else:
         train_and_test(config, classifier)
 
+@cli.command()
+@click.option('-dp', '--delaypenalty', type=click.FLOAT, default=1.0, show_default=True,
+              help='alpha parameter in the time delay function')
+@pass_config
+def calimera(config: Config, delaypenalty: float) -> None:
+    """
+    Run 'CALIMERA' algorithm.
+    """
+    logger.info("Running CALIMERA ...")
+    classifier = CALIMERA(config.timestamps, delaypenalty)
+    if config.cv_data is not None:
+        cv(config, classifier)
+    else:
+        train_and_test(config, classifier)
+
 
 def determine_voting_result(votes):
     req_votes = math.ceil(len(votes)/2)
@@ -711,7 +727,7 @@ def cv(config: Config, classifier: EarlyClassifier) -> None:
   
 
             else:
-                """ For the ECTS method """
+                """ For ECTS and CALIMERA methods """
                 # Train the classifier
                 start = time.time()
                 classifier.train(fold_train_data, fold_train_labels)
