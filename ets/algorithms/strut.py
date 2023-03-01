@@ -503,7 +503,7 @@ class STRUT():
 
             os.makedirs('results', exist_ok=True) # create a directory to store results
             os.makedirs('results/'+self.dataset+'_metric_scores', exist_ok=True) # create a subdirectory to store metric scores
-            os.makedirs('results/'+self.dataset+'_plots', exist_ok=True) # create a subdirectory to store olots
+            os.makedirs('results/'+self.dataset+'_plots', exist_ok=True) # create a subdirectory to store plots
 
             # save metric scores in a 2d ndarray where each each row corresponds to a split 
             # and each column to a truncation time point starting from start = 11
@@ -741,13 +741,13 @@ class STRUT():
                 f1_scores = np.array([x[1] for x in sorted(f1_scores.items())])
                 harmonic_means = np.array([x[1] for x in sorted(harmonic_means.items())])
 
-                with open('results/'+self.dataset+'_metric_scores/'+self.dataset+'_minirocket_strut_fav_accuracy.txt','a') as f: #what if the user wants to delete the existing file before running again the experiment?
+                with open('results/'+self.dataset+'_metric_scores/'+self.dataset+'_minirocket_fav_accuracy.txt','a') as f: #what if the user wants to delete the existing file before running again the experiment?
                     np.savetxt(f, (evaluated_timepoints, accuracies),  delimiter=',')
 
-                with open('results/'+self.dataset+'_metric_scores/'+self.dataset+'_minirocket_strut_fav_f1_score.txt','a') as f: 
+                with open('results/'+self.dataset+'_metric_scores/'+self.dataset+'_minirocket_fav_f1_score.txt','a') as f: 
                     np.savetxt(f, (evaluated_timepoints,f1_scores),  delimiter=',')
 
-                with open('results/'+self.dataset+'_metric_scores/'+self.dataset+'_minirocket_strut_fav_harmonic_mean.txt','a') as f: 
+                with open('results/'+self.dataset+'_metric_scores/'+self.dataset+'_minirocket_fav_harmonic_mean.txt','a') as f: 
                     np.savetxt(f, (evaluated_timepoints,harmonic_means),  delimiter=',')
 
                 #plot accuracy
@@ -975,13 +975,13 @@ class STRUT():
                 f1_scores = np.array([x[1] for x in sorted(f1_scores.items())])
                 harmonic_means = np.array([x[1] for x in sorted(harmonic_means.items())])
 
-                with open('results/'+self.dataset+'_metric_scores/'+self.dataset+'_weasel_strut_fav_accuracy.txt','a') as f: #what if the user wants to delete the existing file before running again the experiment?
+                with open('results/'+self.dataset+'_metric_scores/'+self.dataset+'_weasel_fav_accuracy.txt','a') as f: #what if the user wants to delete the existing file before running again the experiment?
                     np.savetxt(f, (evaluated_timepoints, accuracies),  delimiter=',')
 
-                with open('results/'+self.dataset+'_metric_scores/'+self.dataset+'_weasel_strut_fav_f1_score.txt','a') as f: 
+                with open('results/'+self.dataset+'_metric_scores/'+self.dataset+'_weasel_fav_f1_score.txt','a') as f: 
                     np.savetxt(f, (evaluated_timepoints,f1_scores),  delimiter=',')
 
-                with open('results/'+self.dataset+'_metric_scores/'+self.dataset+'_weasel_strut_fav_harmonic_mean.txt','a') as f: 
+                with open('results/'+self.dataset+'_metric_scores/'+self.dataset+'_weasel_fav_harmonic_mean.txt','a') as f: 
                     np.savetxt(f, (evaluated_timepoints,harmonic_means),  delimiter=',')
 
                 #plot accuracy
