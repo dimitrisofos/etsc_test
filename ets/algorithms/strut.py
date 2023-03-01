@@ -19,7 +19,7 @@ from scipy.io import arff
 from ets.algorithms.utils import accuracy, harmonic_mean
 from ets.algorithms.utils import topy
 from progressbar import ProgressBar, AnimatedMarker, Bar, AdaptiveETA, Percentage, ProgressBar, SimpleProgress
-
+import math
 
 class STRUT():
 
@@ -38,6 +38,7 @@ class STRUT():
             training_time, test_time = 0.0, 0.0
 
             if self.tsc_method == "MINIROCKET" or self.tsc_method == "MINIROCKET_FAV":
+
             
                 if(self.variate > 1):  # if multivariate
 
@@ -111,6 +112,46 @@ class STRUT():
             data = from_nested_to_3d_numpy(data)[:,:,:tp]
             return  from_3d_numpy_to_nested(data)
 
+        def nan_handler(self, df, tsc_method):
+            pd.set_option("display.max_rows", None, "display.max_columns", None)
+            df = df.reset_index(drop =True)
+            if tsc_method == 'MINIROCKET' or tsc_method == 'MINIROCKET_FAV':
+                X_3d = from_nested_to_3d_numpy(df)
+                size, dim, tpoint = X_3d.shape
+                for i in range(size): # for each row
+                    for j in range(dim): # for each dimension
+                        prev = 0
+                        next = 0
+                        for k in range(tpoint): 
+                            if math.isnan(X_3d[i][j][k]): 
+                                for l in range(k+1, tpoint): # for each NaN
+                                    if not math.isnan(X_3d[i][j][l]): # find the next not NaN
+                                        next = X_3d[i][j][l]
+                                        break
+                                average = (next + prev) / 2
+                                prev = average
+                                X_3d[i][j][k] = average 
+                            else:
+                                prev = X_3d[i][j][k]
+                return from_3d_numpy_to_nested(X_3d)
+            else:
+                for index_r, row in df.iterrows():  # for each row
+                    prev = 0
+                    next = 0
+                    row = row.reset_index(drop=True)
+                    for index_c, item in row.iteritems():  # for each NaN
+                        if math.isnan(item):
+                            for index_a, real in row[index_c:].iteritems():  # find the next not NaN
+                                if not math.isnan(real):
+                                    next = real
+                                    break
+                            average = (next + prev) / 2
+                            prev = average
+                            df.iloc[int(index_r), index_c+1] = average
+                        else:
+                            prev = item
+            return df
+
 
         def minirocket_strut(self, train_data, test_data): # -> None:
             
@@ -121,16 +162,16 @@ class STRUT():
                 Y = Y_TRAIN
             elif isinstance(train_data, tuple): # perform cv 
                 X = train_data[0]
-                X = X.fillna(0)
+                X = self.nan_handler(X, self.tsc_method)
                 Y = train_data[1]
                 X_TRAIN = X
                 Y_TRAIN = Y
                 X_TEST = test_data[0]
-                X_TEST = X_TEST.fillna(0)
+                X_TEST = self.nan_handler(X_TEST, self.tsc_method)
                 Y_TEST = test_data[1]
             else: # single csv file provided as input (no cv)
                 X = train_data
-                X = X.fillna(0)
+                X = self.nan_handler(X, self.tsc_method)
                 Y = test_data
                 X_TRAIN , X_TEST, Y_TRAIN,  Y_TEST  = train_test_split(X, Y, test_size=0.2,  stratify = Y, random_state=0)
                 X = X_TRAIN 
@@ -550,20 +591,20 @@ class STRUT():
                 X_TRAIN, Y_TRAIN = load_from_arff_to_dataframe(train_data)
                 X_TEST, Y_TEST = load_from_arff_to_dataframe(test_data)
                 X = X_TRAIN.append(X_TEST)
-                X = X.fillna(0)
+                X = nan_handler(X)
                 Y = np.append(Y_TRAIN, Y_TEST)
             elif isinstance(train_data, tuple): # perform cv
                 X = train_data[0]
-                X = X.fillna(0)
+                X = self.nan_handler(X, self.tsc_method)
                 Y = train_data[1]
                 X_TRAIN = X
                 Y_TRAIN = Y
                 X_TEST = test_data[0]
-                X_TEST = X_TEST.fillna(0)
+                X_TEST = self.nan_handler(X_TEST, self.tsc_method)
                 Y_TEST = test_data[1]
             else:  # single csv file provided as input (no cv) 
                 X = train_data
-                X = X.fillna(0)
+                X = self.nan_handler(X, self.tsc_method)
                 Y = test_data
                 X_TRAIN , X_TEST, Y_TRAIN,  Y_TEST  = train_test_split(X, Y, test_size=0.2,  stratify = Y, random_state=0)
 
@@ -750,8 +791,6 @@ class STRUT():
             result = self.train_test_prefix(self.trunc_data(X_TRAIN,best_timepoint), self.trunc_data(X_TEST,best_timepoint), Y_TRAIN, Y_TEST)
             preds = [(best_timepoint,result[0][x]) for x in range(result[0].size)]
             testing_time = result[4]
-
-            #print(preds, training_time, testing_time, float(best_timepoint)/self.ts_length)
             
             return preds, training_time, testing_time, float(best_timepoint)/self.ts_length
 
