@@ -142,5 +142,5 @@ def run(earliness, finalcell=None):
     train = time.time() - start
     res = evaluate_model(model, DATASET_INDEX, dataset_prefix=dataset_name_, batch_size=128,
                          normalize_timeseries=normalize_dataset)
-    test = time.time() - start - train
+    test = time.time() - train
     return res, train, test, finalcell
