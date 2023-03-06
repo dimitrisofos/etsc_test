@@ -140,7 +140,8 @@ def run(earliness, finalcell=None):
     train_model(model, DATASET_INDEX, dataset_name_, epochs=600, batch_size=128,
                 normalize_timeseries=normalize_dataset)
     train = time.time() - start
+    start_test = time.time()
     res = evaluate_model(model, DATASET_INDEX, dataset_prefix=dataset_name_, batch_size=128,
                          normalize_timeseries=normalize_dataset)
-    test = time.time() - train
+    test = time.time() - start_test
     return res, train, test, finalcell
