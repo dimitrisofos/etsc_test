@@ -13,9 +13,9 @@ class CALIMERA(EarlyClassifier):
 
     def _generate_timestamps(max_timestamp):
         NUM_TIMESTAMPS = 20
-        num_intervals_between_timestamps = min(NUM_TIMESTAMPS-1, max_timestamp)
-        step = max_timestamp // num_intervals_between_timestamps
-        timestamps = np.arange(step, max_timestamp+step, step).astype(np.int32)
+        num_intervals_between_timestamps = min(NUM_TIMESTAMPS, max_timestamp)
+        step = max_timestamp / num_intervals_between_timestamps
+        timestamps = np.arange(step, max_timestamp+0.5*step, step).astype(np.int32)
         timestamps[-1] = max_timestamp
         return timestamps
 
@@ -30,24 +30,19 @@ class CALIMERA(EarlyClassifier):
                 extractors.append(MiniRocket().fit(X_sub).transform)
         return extractors
 
-    def _get_features(X, feature_extractors, timestamps):
-        features = [[] for i in range(timestamps.shape[0])]
-        for i in range(timestamps.shape[0]):
-            timestamp = timestamps[i]
-            X_sub = X[:, :timestamp]
-            X_sub = X_sub.reshape(X_sub.shape[0], 1, -1)
-            feature = feature_extractors[i](X_sub)
-            features[i] = np.asarray(feature)
-            features[i] = features[i].reshape(features[i].shape[0], -1)
-        return features
-
-    def _learn_classifiers(features, ys, timestamps):
+    def _learn_classifiers(X, feature_extractors, ys, timestamps):
         T = timestamps.shape[0]
         classifiers = [None for t in range(T)]
 
         for t in range(T):
+            timestamp = timestamps[t]
+            X_sub = X[:, :timestamp]
+            X_sub = X_sub.reshape(X_sub.shape[0], 1, -1)
+            features = feature_extractors[t](X_sub)
+            features = np.asarray(features)
+            features = features.reshape(features.shape[0], -1)
             classifier = WeakClassifier()
-            classifier.fit(features[t], ys)
+            classifier.fit(features, ys)
             classifiers[t] = classifier
 
         return classifiers
@@ -68,8 +63,9 @@ class CALIMERA(EarlyClassifier):
         timestamps = CALIMERA._generate_timestamps(max_timestamp=X_train.shape[1])
 
         self.feature_extractors = CALIMERA._learn_feature_extractors(X_train, timestamps)
-        features_train = CALIMERA._get_features(X_train, self.feature_extractors, timestamps)
-        self.classifiers = CALIMERA._learn_classifiers(features_train, labels, timestamps)
+        self.classifiers = CALIMERA._learn_classifiers(
+            X_train,self.feature_extractors, labels, timestamps
+        )
         predictors, costs = CALIMERA._generate_data_for_training_stopping_module(self.classifiers)
         self.stopping_module = StoppingModule()
         self.stopping_module.fit(
