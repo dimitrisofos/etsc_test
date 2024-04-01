@@ -1,15 +1,19 @@
 # ETSC: Early Time Series Classification
 
-`ETSC` is a Python Early Time-Series Classification library for public use, used in **"[Evaluation of Early Time-Series Classification
-Algorithms](https://arxiv-export1.library.cornell.edu/abs/2203.01628)"**, Authors: Charilaos Akasiadis, Evgenios Kladis, Evangelos Michelioudakis, Elias Alevizos, Alexander Artikis.
+`ETSC` is a Python Early Time-Series Classification library for public use, used in **"[A Framework to Evaluate Early Time-Series Classification
+Algorithms](https://dx.doi.org/10.48786/edbt.2024.54)"**, Authors: Charilaos Akasiadis, Evgenios Kladis, Petro-Foti Kamberi, Evangelos Michelioudakis, Elias Alevizos, Alexander Artikis.
 
-The aim of this work is to study and collect algorithms that conduct early time-series classification, in a user-friendly format, for researchers to use for their work.
+Cite as:
+> Akasiadis, C., Kladis, E., Kamberi, P. F., Michelioudakis, E., Alevizos, E., & Artikis, A. (2024). A Framework to Evaluate Early Time-Series Classification Algorithms. EDBT 2024: 27th International Conference on Extending Database Technology, Proceedings (pp. 623–635). ISBN 978-3-89318-095-0 on OpenProceedings.org
+
+The aim of this work is to study and collect algorithms that conduct early time-series classification, in a user-friendly format, for researchers to use as a benchmark.
 
 Currently, six algorithms are included in this directory. A python cli, simplifies the execution of each algorithm
-The predictions are evalueated through metrics such as earliness, accuracy, f1-score(if wanted) and computation time for both training and testing.
+The predictions are evaluated through metrics such as earliness, accuracy, f1-score, harmonic mean between accuracy and earliness, and computation time for both training and testing.
 
 ## Acknowledgments
 
+We would like to thank the creators of the UCR/UEA repository for making the datasets openly available.
 Special thanks to Evangelos Michelioudakis (vagmcs@iit.demokritos.gr) for the contribution to the development of this repository.
 
 ## License
